@@ -15,11 +15,21 @@ using namespace std;
 
 int success = 0;
 
+bool operator==(Position& p1, Position &p2)
+{
+	if (p1.getX() == p2.getX() && p1.getY() == p2.getY())
+	{
+		return true;
+	}
+
+	return false;
+}
+
 //设置入口坐标
 void MazePerson::setPersonPosition(int x, int y)
 {
-	m_exPosition.setX(x);
-	m_exPosition.setY(y);
+	m_stPosition.setX(x);
+	m_stPosition.setY(y);
 }
 
 //设置速度
@@ -34,17 +44,21 @@ void MazePerson::setPersonChar(char shpe)
 	m_cPersonShap = shpe;
 }
 
-//void MazePerson::gotoxy(int x,int y)
-//{
-//	COORD cd;
-//	cd.X = x;
-//	cd.Y = y;
-//	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-//	SetConsoleCursorPosition(handle,cd)
-//}
+void MazePerson::gotoxy(int x,int y)
+{
+	cout << char(8) << " ";
+	COORD cd;
+	cd.X = y;
+	cd.Y = x+1;
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(handle,cd);
+	cout << m_cPersonShap;
+	//system("pause");
+	Sleep(m_iSpeed);
+}
 
 //开始走迷宫
-int MazePerson::start()
+void MazePerson::start()
 {
 	int exX;
 	int exY;
@@ -55,9 +69,9 @@ int MazePerson::start()
 	success++;
 	int initX = m_stPosition.getX();
 	int initY = m_stPosition.getY();
-	gotoxy(m_stPosition.getX(), m_stPosition.getY());
-	cout << "the " << success << "th:";
-	cout << "(" << m_stPosition.getX() << "," << m_stPosition.getY() << ")" << endl;
+    gotoxy(m_stPosition.getX(), m_stPosition.getY());
+// 	cout << "the " << success << "th:";
+// 	cout << "(" << m_stPosition.getX() << "," << m_stPosition.getY() << ")" << endl;
 
 	
 	//得到第两个点
@@ -103,12 +117,12 @@ int MazePerson::start()
 		m_iPersonDir = RIGHT;
 	}
 	success++;
-	gotoxy(m_stPosition.getX(), m_stPosition.getY());
-	cout << "the " << success << "th:";
-	cout << "(" << m_curPosition.getX() << "," << m_curPosition.getY() << ")" << endl;
+	gotoxy(m_curPosition.getX(), m_curPosition.getY());
+// 	cout << "the " << success << "th:";
+// 	cout << "(" << m_curPosition.getX() << "," << m_curPosition.getY() << ")" << endl;
 
 	//得到第三个到最后一个点
-	while (curX > 0 && curY > 0 && curX < m_imap.getRow() && curY < m_imap.getColumn())
+	while (curX > 0 && curY > 0 && curX < m_imap.getRow()-1 && curY < m_imap.getColumn()-1)
 	{
 		//(exX == curX + 1 && exY == curY) && m_imap.getMazeMap(curX + 1,curY+1) == WALL
 		if (m_iPersonDir == UP)
@@ -291,10 +305,20 @@ int MazePerson::start()
 		m_curPosition.setX(curX);
 		m_curPosition.setY(curY);
 		success++;
-		cout << "the " << success << "th:";
-		cout << "(" << m_curPosition.getX() << "," << m_curPosition.getY() << ")" << endl;
-		gotoxy(m_stPosition.getX(), m_stPosition.getY());
+// 		cout << "the " << success << "th:";
+// 		cout << "(" << m_curPosition.getX() << "," << m_curPosition.getY() << ")" << endl;
+		gotoxy(m_curPosition.getX(), m_curPosition.getY());
 	}
-	return success;
+	gotoxy(m_imap.getRow()+1,0);
+	if (!(m_curPosition == m_stPosition))
+	{
+		cout << "开心地说：哈哈，我出来咯～～" << endl;
+		cout << "（总共走了" << success << "步）" << endl;
+	}
+	else if(m_curPosition == m_stPosition)
+	{
+		cout << "生气地说：耍我咯！！！！" << endl;
+		cout << "（总共走了" << success << "步）" << endl;
+	}
 }      
 
