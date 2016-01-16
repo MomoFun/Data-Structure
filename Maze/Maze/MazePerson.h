@@ -6,14 +6,14 @@ class MazePerson
 {
 public:
 	// 给人一个地图
-	MazePerson(int x,int y, MazeMap &map) : m_imap(map), m_curPosition(x, y), m_exPosition(-1, -1), m_stPosition(x, y)
+	MazePerson(int x,int y, MazeMap &map) : m_imap(map), m_curPosition(x, y), m_exPosition(x, y), m_stPosition(x, y), m_iSpeed(1000)
 	{
 
 	}
 	void setPersonPosition(int x, int y);
 	void setPersonSpeed(int spd);
 	void setPersonChar(char shpe);
-	int start();
+	void start();
 	void gotoxy(int x,int y);
 
 private:
