@@ -5,10 +5,10 @@ using namespace std;
 #define WALL 0
 #define ROAD 1
 
-#define UP 1
+#define UP 0
+#define LEFT 1
 #define DOWN 2
-#define LEFT 3
-#define RIGHT 4
+#define RIGHT 3
 
 #define FAST 1
 #define SLOW 0
@@ -60,253 +60,52 @@ void MazePerson::gotoxy(int x,int y)
 //开始走迷宫
 void MazePerson::start()
 {
+	int exDir;
 	int exX;
 	int exY;
 	int curX;
 	int curY;
+	int next[4][2] = {{-1, 0},{0, -1},{1, 0},{0, 1}};
 
 	//获取初始点坐标
 	success++;
 	int initX = m_stPosition.getX();
 	int initY = m_stPosition.getY();
-    gotoxy(m_stPosition.getX(), m_stPosition.getY());
-// 	cout << "the " << success << "th:";
-// 	cout << "(" << m_stPosition.getX() << "," << m_stPosition.getY() << ")" << endl;
+	gotoxy(m_stPosition.getX(), m_stPosition.getY());
 
-	
 	//得到第两个点
 	m_exPosition = m_stPosition;
-	exX = initX;
-	exY = initY;
-
-	if (m_imap.getMazeMap(initX,initY + 1) == WALL && m_imap.getMazeMap(initX - 1,initY) == ROAD)
+	int i = RIGHT;
+	while (m_imap.getMazeMap(initX + next[i][0],initY + next[i][1]) != WALL
+		|| m_imap.getMazeMap(initX + next[(i+1)%4][0], initY + next[(i+1)%4][1]) != ROAD)
 	{
-		
-		curX = initX - 1;
-		curY = initY;
-		m_curPosition.setX(curX);
-		m_curPosition.setY(curY);
-		m_iPersonDir = UP;
+		i = (i + 1)%4;
 	}
-
-	if (m_imap.getMazeMap(initX - 1, initY) == WALL && m_imap.getMazeMap(initX, initY - 1) == ROAD)
-	{
-		
-		curX = initX;
-		curY = initY - 1;
-		m_curPosition.setX(curX);
-		m_curPosition.setY(curY);
-		m_iPersonDir = LEFT;
-	}
-
-	if (m_imap.getMazeMap(initX, initY - 1) == WALL && m_imap.getMazeMap(initX + 1, initY) == ROAD)
-	{
-		curX = initX + 1;
-		curY = initY;
-		m_curPosition.setX(curX);
-		m_curPosition.setY(curY);
-		m_iPersonDir = DOWN;
-	}
-
-	if (m_imap.getMazeMap(initX + 1, initY) == WALL && m_imap.getMazeMap(initX + 1, initY) == ROAD)
-	{
-		curX = initX + 1;
-		curY = initY;
-		m_curPosition.setX(curX);
-		m_curPosition.setY(curY);
-		m_iPersonDir = RIGHT;
-	}
+	m_iPersonDir = (i+1)%4;
+	curX = m_exPosition.getX() + next[m_iPersonDir][0];
+	curY = m_exPosition.getY() + next[m_iPersonDir][1];
+	m_curPosition.setX(curX);
+	m_curPosition.setY(curY); 
 	success++;
 	gotoxy(m_curPosition.getX(), m_curPosition.getY());
-// 	cout << "the " << success << "th:";
-// 	cout << "(" << m_curPosition.getX() << "," << m_curPosition.getY() << ")" << endl;
 
 	//得到第三个到最后一个点
 	while (curX > 0 && curY > 0 && curX < m_imap.getRow()-1 && curY < m_imap.getColumn()-1)
 	{
-		//(exX == curX + 1 && exY == curY) && m_imap.getMazeMap(curX + 1,curY+1) == WALL
-		if (m_iPersonDir == UP)
+		exDir = m_iPersonDir;
+		m_exPosition = m_curPosition;
+		int i = exDir - 1 + 4;
+
+		while(m_imap.getMazeMap(m_exPosition.getX() + next[i%4][0], m_exPosition.getY() + next[i%4][1])!= ROAD)
 		{
-			//1
-			if (m_imap.getMazeMap(curX,curY+1) == ROAD )
-			{
-				exX = curX;
-				exY = curY;
-				curX = curX;
-				curY = curY+1;
-				m_iPersonDir = RIGHT;
-			}
-			else if (m_imap.getMazeMap(curX,curY+1) == WALL)
-			{
-				if (m_imap.getMazeMap(curX - 1, curY) == ROAD )
-				{
-					exX = curX;
-					exY = curY;
-					curX = curX - 1;
-					curY = curY;
-					m_iPersonDir = UP;
-				}
-				else if (m_imap.getMazeMap(curX - 1, curY) == WALL)
-				{
-					if (m_imap.getMazeMap(curX, curY - 1) == ROAD)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX;
-						curY = curY - 1;
-						m_iPersonDir = LEFT;
-					}
-					else if (m_imap.getMazeMap(curX, curY - 1) == WALL)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX + 1;
-						curY = curY;
-						m_iPersonDir = DOWN;
-					}
-				}
-			}
+			i++;
 		}
-
-		//(exX == curX - 1 && exY == curY) && m_imap.getMazeMap(curX - 1,curY - 1) == WALL
-		else if (m_iPersonDir == DOWN)
-		{
-			//2
-			if (m_imap.getMazeMap(curX,curY-1) == ROAD )
-			{
-				exX = curX;
-				exY = curY;
-				curX = curX;
-				curY = curY-1;
-				m_iPersonDir = LEFT;
-
-			}
-			else if (m_imap.getMazeMap(curX,curY-1) == WALL)
-			{
-				if (m_imap.getMazeMap(curX+1, curY) == ROAD )
-				{
-					exX = curX;
-					exY = curY;
-					curX = curX + 1;
-					curY = curY;
-					m_iPersonDir = DOWN;
-				}
-				else if (m_imap.getMazeMap(curX+1, curY) == WALL)
-				{
-					if (m_imap.getMazeMap(curX, curY+1) == ROAD)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX;
-						curY = curY+1;
-						m_iPersonDir = RIGHT;
-					}
-					else if (m_imap.getMazeMap(curX, curY+1) == WALL)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX - 1;
-						curY = curY;
-						m_iPersonDir = UP;
-					}
-				}
-			}
-		}
-
-		//(exX == curX && exY == curY + 1) && m_imap.getMazeMap(curX - 1,curY + 1) == WALL
-		else if (m_iPersonDir == LEFT)
-		{
-			//3
-			if (m_imap.getMazeMap(curX-1,curY) == ROAD )
-			{
-				exX = curX;
-				exY = curY;
-				curX = curX-1;
-				curY = curY;
-				m_iPersonDir = UP;
-
-			}
-			else if (m_imap.getMazeMap(curX-1,curY) == WALL)
-			{
-				if (m_imap.getMazeMap(curX, curY-1) == ROAD )
-				{
-					exX = curX;
-					exY = curY;
-					curX = curX;
-					curY = curY-1;
-					m_iPersonDir = LEFT;
-				}
-				else if (m_imap.getMazeMap(curX, curY-1) == WALL)
-				{
-					if (m_imap.getMazeMap(curX+1, curY) == ROAD)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX + 1;
-						curY = curY;
-						m_iPersonDir = DOWN;
-					}
-					else if (m_imap.getMazeMap(curX+1, curY) == WALL)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX;
-						curY = curY + 1;
-						m_iPersonDir = RIGHT;
-					}
-				}
-			}
-		}
-
-		//(exX == curX && exY == curY - 1) && m_imap.getMazeMap(curX + 1,curY - 1) == WALL
-		else if (m_iPersonDir == RIGHT)
-		{
-			//4
-			if (m_imap.getMazeMap(curX+1,curY) == ROAD )
-			{
-				exX = curX;
-				exY = curY;
-				curX = curX+1;
-				curY = curY;
-				m_iPersonDir = DOWN;
-
-			}
-			else if (m_imap.getMazeMap(curX+1,curY) == WALL)
-			{
-				if (m_imap.getMazeMap(curX, curY+1) == ROAD )
-				{
-					exX = curX;
-					exY = curY;
-					curX = curX;
-					curY = curY+1;
-					m_iPersonDir = RIGHT;
-				}
-				else if (m_imap.getMazeMap(curX, curY+1) == WALL)
-				{
-					if (m_imap.getMazeMap(curX-1, curY) == ROAD)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX-1;
-						curY = curY;
-						m_iPersonDir = UP;
-					}
-					else if (m_imap.getMazeMap(curX-1, curY) == WALL)
-					{
-						exX = curX;
-						exY = curY;
-						curX = curX;
-						curY = curY-1;
-						m_iPersonDir = LEFT;
-					}
-				}
-			}
-		}
+		m_iPersonDir = i;
+		curX = m_exPosition.getX() + next[i%4][0];
+		curY = m_exPosition.getY() + next[i%4][1];
 		m_curPosition.setX(curX);
 		m_curPosition.setY(curY);
 		success++;
-// 		cout << "the " << success << "th:";
-// 		cout << "(" << m_curPosition.getX() << "," << m_curPosition.getY() << ")" << endl;
 		gotoxy(m_curPosition.getX(), m_curPosition.getY());
 	}
 	gotoxy(m_imap.getRow()+1,0);
