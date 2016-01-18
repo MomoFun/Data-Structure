@@ -1,7 +1,6 @@
 #ifndef __MAZEMAP_H_H
 #define __MAZEMAP_H_H
 
-
 class MazeMap
 {
 public:

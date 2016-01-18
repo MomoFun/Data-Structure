@@ -5,20 +5,19 @@ using namespace std;
 
 #define WALL 0
 #define ROAD 1
-#define FAST 1
-#define SLOW 0
+#define FAST 500
+#define SLOW 1000
 
-int SUCCESS = 0;
 
 int main()
 {
-	int map[8][9]= {
-		{WALL,WALL,WALL,WALL,WALL,WALL,WALL,ROAD,WALL},
+	int map[8][9]= { 
+		{WALL,WALL,WALL,WALL,ROAD,WALL,WALL,WALL,WALL},
 		{WALL,WALL,WALL,WALL,ROAD,WALL,WALL,ROAD,WALL},
 		{WALL,WALL,WALL,WALL,ROAD,WALL,WALL,ROAD,WALL},
 		{WALL,WALL,WALL,WALL,ROAD,WALL,WALL,ROAD,WALL},
-		{WALL,WALL,ROAD,ROAD,ROAD,ROAD,WALL,ROAD,WALL},
-		{WALL,WALL,ROAD,WALL,WALL,ROAD,ROAD,ROAD,WALL},
+		{WALL,ROAD,ROAD,ROAD,ROAD,ROAD,ROAD,ROAD,WALL},
+		{WALL,ROAD,ROAD,WALL,WALL,WALL,WALL,WALL,WALL},
 		{WALL,ROAD,ROAD,WALL,WALL,WALL,WALL,WALL,WALL},
 		{WALL,ROAD,WALL,WALL,WALL,WALL,WALL,WALL,WALL}
 	};
@@ -26,15 +25,15 @@ int main()
 	MazeMap maze(&map[0][0], 8, 9);
 	maze.setMazeMap(8,9, WALL);
 	maze.setMazeWall('*',' ');
+	cout << "========== GMM¶þÎ¬ÃÔ¹¬ ==========" << endl;
 	maze.drawMap();
 
 	MazePerson mazer(7,1,maze);
 	mazer.setPersonPosition(7,1);
 	mazer.setPersonSpeed(FAST);
 	mazer.setPersonChar('T');
-	SUCCESS = mazer.start();
-	cout << SUCCESS << endl;
+	mazer.start();
 
-	system("pause");
+	//system("pause");
 	return 0;
 }

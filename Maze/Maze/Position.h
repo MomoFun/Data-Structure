@@ -2,6 +2,7 @@ class Position
 {
 	//×ø±êÀà
 public:
+	Position() {}
 	Position(int _x,int _y);
 	void setX(int _x);
 	int getX();
